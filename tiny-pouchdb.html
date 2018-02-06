@@ -1,0 +1,64 @@
+<link rel="import" href="bower_components/polymer/polymer.html">
+<script src="bower_components/pouchdb/dist/pouchdb.min.js"></script>
+<dom-module id="tiny-pouchdb">
+  <template>
+    <style>
+     :host {
+	 display: none;
+     }
+    </style>
+  </template>
+  <script>
+   class TinyPouchDB extends Polymer.Element {
+       static get is() { return "tiny-pouchdb"; }
+       static get properties() {
+	   return {
+	       name: {
+		   type: String,
+		   reflectToAttribute: true,
+		   notify: true,
+		   value: "NO-NAME"
+	       },
+	       initsrc: {
+		   type: String,
+	       },
+	       db: {
+		   type: Object,
+		   notify: true,
+		   value: null,
+		   observer: "_reload_books"
+	       },
+	       books: {
+		   type: Array,
+		   notify: true,
+		   value: []
+	       }
+	   }
+       }
+       reset() { this._reload_books(); }
+       _reload_books() {
+	   if (!this.db) return;
+	   this.db.info()
+	       .then(r => {
+		   if (r.update_seq === 0) { this._init_db_and_load_books(); }
+		   else { this._load_books(); }
+	       });
+       }
+       _load_books() {
+	   this.db.allDocs({include_docs: true})
+	       .then(r => this.books = r.rows.map(b => b.doc));
+       }
+       _init_db_and_load_books() {
+	   fetch(this.initsrc)
+	       .then(rep => rep.json().then(
+		   v => this.db.bulkDocs(v).then(
+		       _ => this._load_books())));
+       }
+       ready() {
+	   const db = new PouchDB(this.name);
+	   db.info().then(_ => this.db=db);
+       }
+   }
+   customElements.define(TinyPouchDB.is, TinyPouchDB);
+  </script>
+</dom-module>

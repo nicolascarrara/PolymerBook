@@ -1,0 +1,80 @@
+<link rel="import" href="bower_components/polymer/polymer.html">
+<link rel="import" href="bower_components/paper-card/paper-card.html">
+<link rel="import" href="bower_components/iron-flex-layout/iron-flex-layout.html">
+<link rel="import" href="bower_components/iron-flex-layout/iron-flex-layout-classes.html">
+
+<dom-module id="tiny-book-list">
+  <template>
+    <style include="iron-flex iron-flex-layout"></style>
+    <style>
+     @media (min-width: 300px) {
+	 paper-card.book-card { width: 98%; }
+     }
+     @media (min-width: 700px) {
+	 paper-card.book-card { width: 48.5%; }
+     }
+     @media (min-width: 1024px) {
+	 paper-card.book-card { width: 32%; }
+     }
+     :host {
+	 width: 100%;
+	 position: relative;
+	 display: block;
+     }
+     paper-card.book-card {
+	 margin: 3px;
+	 height: 120px;
+	 box-sizing: border-box;
+     }
+     div.book-card-cover {
+	 width: 120px;
+	 min-width: 120px;
+	 display: inline-block;
+	 background-size: contain;
+	 background-repeat: no-repeat;
+	 background-color: #dde;
+	 background-position-x: center;
+     }
+     div.book-card-info {
+	 height: 100%;
+	 display: inline-block;
+	 padding-right: 10px;
+	 text-align: right;
+     }
+     div.book-card-info-title {
+	 font-weight: bold;
+     }
+     div.book-list-content {
+	 position: relative;
+	 width: 100%;
+	 justify-content: space-around;
+     }
+    </style>
+    <div class="book-list-content flex layout horizontal wrap around-justified">
+      <template is="dom-repeat" items="{{books}}">
+	<paper-card class="book-card layout horizontal">
+	  <div class="book-card-cover" style="background-image: url(data:image/jpeg;base64,{{item.img.data}})"></div>
+	  <div class="book-card-info">
+	    <div class="book-card-info-title">{{item.title}}</div>
+	    <div class="book-card-info-author">{{item.author}}</div>
+	    <div class="book-card-info-price">{{item.price}}€</div>
+	  </div>
+	</paper-card>
+      </template>
+    </div>
+  </template>
+  <script>
+   class TinyBookList extends Polymer.Element {
+       static get is() { return "tiny-book-list"; }
+       static get properties() {
+	   return {
+	       books: {
+		   type: Array,
+		   notify: true
+	       }
+	   }
+       }
+   }
+   customElements.define(TinyBookList.is, TinyBookList);
+  </script>
+</dom-module>

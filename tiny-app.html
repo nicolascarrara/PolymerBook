@@ -1,0 +1,60 @@
+<link rel="import" href="bower_components/polymer/polymer.html">
+<link rel="import" href="bower_components/app-layout/app-header/app-header.html">
+<link rel="import" href="bower_components/app-layout/app-header-layout/app-header-layout.html">
+<link rel="import" href="bower_components/app-layout/app-toolbar/app-toolbar.html">
+<link rel="import" href="bower_components/iron-flex-layout/iron-flex-layout.html">
+<link rel="import" href="tiny-book-list.html">
+<link rel="import" href="tiny-pouchdb.html">
+<link rel="import" href="bower_components/paper-button/paper-button.html">
+
+<dom-module id="tiny-app">
+  <template>
+    <style include="iron-flex iron-flex-layout"></style>
+    <style>
+     :host tiny-book-list {
+	 padding-top: 5px;
+	 padding-bottom: 5px;
+     }
+     :host paper-button.toolbar-button {
+	 background-color: #ff92a1;
+     }
+     :host app-toolbar {
+	 background-color: darkred;
+	 position: sticky;
+     }
+     :host div.tiny-app-title {
+	 font-size: 20pt;
+	 color: white;
+     }
+    </style>
+    <tiny-pouchdb
+	name="tiny-books"
+	initsrc="books.json"
+	books="{{elements}}"
+	id="db"
+    ></tiny-pouchdb>
+    <app-header reveals effects="waterfall">
+      <app-toolbar class="layout horizontal">
+	<div class="tiny-app-title">Tiny Amazon</div>
+	<span class="flex"></span>
+	<paper-button class="toolbar-button" on-tap="_reset">Reset</paper-button>
+      </app-toolbar>
+    </app-header>
+    <tiny-book-list books="{{elements}}"></tiny-book-list>
+  </template>
+  <script>
+   class TinyApp extends Polymer.Element {
+       static get is() { return "tiny-app"; }
+       static get properties() {
+	   return {
+	       elements: {
+		   type: Array,
+		   notify: true
+	       }
+	   }
+       }
+       _reset() { this.$.db._reload_books(); }
+   }
+   customElements.define(TinyApp.is, TinyApp);
+  </script>
+</dom-module>
